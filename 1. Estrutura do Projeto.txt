@@ -1,0 +1,207 @@
+1. Estrutura do Projeto
+HomePage: Página inicial que exibe os filmes em cartaz e permite a busca de filmes.
+
+OmbdService: Serviço responsável por realizar as requisições HTTP para a API do TMDb, como buscar filmes em cartaz e pesquisar filmes por nome.
+
+HttpClient: Utilizado para fazer as requisições HTTP à API externa.
+
+2. Como Configurar o Projeto
+Criando um Novo Projeto Ionic:
+
+Se você ainda não criou o projeto, execute o comando abaixo para criar um novo projeto Ionic com Angular:
+
+bash
+ionic start ombd-app blank --type=angular
+Instalação do HttpClient:
+
+O HttpClient já vem com o Angular por padrão, então você não precisa instalar nada adicional. Apenas certifique-se de que o módulo HttpClientModule foi importado no seu app.module.ts:
+
+typescript
+
+import { HttpClientModule } from '@angular/common/http';
+
+@NgModule({
+  declarations: [AppComponent],
+  imports: [HttpClientModule, IonicModule.forRoot(), AppRoutingModule],
+  bootstrap: [AppComponent]
+})
+export class AppModule {}
+Instalando a Biblioteca RxJS (se necessário):
+
+O RxJS já vem incluído com o Angular, mas, caso precise, execute o comando abaixo para garantir que a biblioteca esteja instalada:
+
+bash
+npm install rxjs
+Adicionando o Serviço OmbdService:
+
+Crie o arquivo ombd.service.ts dentro da pasta src/app/services/. Este serviço será responsável por fazer as requisições HTTP à API do TMDb.
+
+3. Explicação do Código
+home.page.html:
+html
+
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Filmes em Cartaz</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Campo de busca -->
+  <ion-searchbar
+    [(ngModel)]="searchTerm"
+    (ionInput)="searchMovies()"
+    debounce="500"
+    placeholder="Buscar por filme..."
+    (keyup.enter)="searchMovies()">
+  </ion-searchbar>
+
+  <!-- Botão de busca -->
+  <ion-button expand="full" (click)="searchMovies()">Buscar</ion-button>
+
+  <!-- Exibição dos filmes -->
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6" *ngFor="let filme of filmes">
+        <ion-card (click)="showDetails(filme)">
+          <ion-card-header>
+            <ion-card-title>{{ filme.title }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-thumbnail slot="start">
+              <img [src]="'https://image.tmdb.org/t/p/w154' + filme.poster_path" />
+            </ion-thumbnail>
+            <p>{{ filme.release_date | date }}</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+Componentes e Funcionalidade:
+
+ion-searchbar: Permite ao usuário digitar o nome de um filme. O valor digitado é vinculado à variável searchTerm usando ngModel. O evento (ionInput) chama a função searchMovies() sempre que o usuário digita, e (keyup.enter) executa a busca quando a tecla Enter é pressionada.
+
+ion-button: Um botão de busca que executa a função searchMovies() quando clicado.
+
+ion-grid: Exibe os filmes em uma grade responsiva, usando ion-card para mostrar os detalhes do filme.
+
+home.page.ts:
+typescript
+
+import { Component, OnInit } from '@angular/core';
+import { OmbdService } from '../services/ombd.service';
+
+@Component({
+  selector: 'app-home',
+  templateUrl: 'home.page.html',
+  styleUrls: ['home.page.scss'],
+})
+export class HomePage implements OnInit {
+
+  filmes: any[] = [];
+  searchTerm: string = '';
+
+  constructor(private ombdService: OmbdService) {}
+
+  ngOnInit() {
+    this.loadMovies(); // Carregar filmes em cartaz ao inicializar o componente
+  }
+
+  // Função para carregar filmes em cartaz (inicial)
+  loadMovies() {
+    this.ombdService.getNowPlaying().subscribe({
+      next: (data) => {
+        this.filmes = data.results;
+      },
+      error: (err) => {
+        console.error('Erro ao buscar filmes em cartaz:', err);
+      }
+    });
+  }
+
+  // Função para buscar filmes ao digitar no campo de pesquisa
+  searchMovies() {
+    if (this.searchTerm.trim() === '') {
+      this.loadMovies(); // Carregar filmes iniciais se o campo de busca estiver vazio
+    } else {
+      this.ombdService.searchMovie(this.searchTerm).subscribe({
+        next: (data: any) => {
+          this.filmes = data.results;
+        },
+        error: (err) => {
+          console.error('Erro ao buscar filmes:', err);
+        }
+      });
+    }
+  }
+
+  // Função para exibir detalhes do filme
+  showDetails(filme: any) {
+    console.log('Filme escolhido:', filme);
+    // Aqui você pode implementar navegação para página de detalhes ou exibir um modal com mais informações
+  }
+}
+Explicação:
+
+ngOnInit: Ao inicializar o componente, a função loadMovies() é chamada para carregar os filmes em cartaz.
+
+loadMovies(): A função que chama o serviço OmbdService para obter filmes em cartaz. A resposta da API é armazenada na variável filmes.
+
+searchMovies(): Função responsável por buscar filmes de acordo com o valor no campo de pesquisa. Se o campo de busca estiver vazio, ele chama loadMovies() novamente para mostrar os filmes iniciais.
+
+showDetails(): Função que pode ser utilizada para mostrar detalhes do filme. Por exemplo, você pode navegar para uma nova página ou abrir um modal.
+
+ombd.service.ts:
+typescript
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class OmbdService {
+  private token = 'seu_token_aqui'; // Substitua com seu token pessoal
+  private apiUrl = 'https://api.themoviedb.org/3';
+
+  constructor(private http: HttpClient) {}
+
+  // Buscar filmes em cartaz
+  getNowPlaying(): Observable<any> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.token}`,
+    });
+
+    return this.http.get(`${this.apiUrl}/movie/now_playing?language=pt-BR&region=BR`, { headers });
+  }
+
+  // Buscar filmes por nome (pesquisa)
+  searchMovie(query: string): Observable<any> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.token}`,
+    });
+
+    return this.http.get(`${this.apiUrl}/search/movie?language=pt-BR&query=${query}`, { headers });
+  }
+}
+Explicação:
+
+getNowPlaying(): Método que faz uma requisição para obter os filmes em cartaz utilizando o HttpClient. O token de autorização é enviado no cabeçalho.
+
+searchMovie(query: string): Método que realiza uma pesquisa de filmes com base no nome fornecido pelo usuário.
+
+4. Passos para Configuração e Execução
+Configuração do Serviço OmbdService:
+
+Copie o código fornecido para o arquivo ombd.service.ts e substitua o valor da variável token pelo seu token pessoal obtido na TMDb.
+
+Inicie o Projeto Ionic:
+
+Execute o comando ionic serve para iniciar o servidor de desenvolvimento e visualizar o aplicativo no navegador.
+
+Testar o App:
+
+Acesse a página inicial e utilize o campo de pesquisa para buscar filmes.
+
+O botão de busca e o campo de texto (que também permite pesquisa com a tecla Enter) irão funcionar para filtrar filmes.

@@ -1,4 +1,3 @@
-
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -12,21 +11,44 @@ export class OmbdService {
 
   constructor(private http: HttpClient) {}
 
-  // Buscar filmes em cartaz
-  getNowPlaying(): Observable<any> {
-    const headers = new HttpHeaders({
+  private getHeaders(): HttpHeaders {
+    return new HttpHeaders({
       Authorization: `Bearer ${this.token}`,
     });
-
-    return this.http.get(`${this.apiUrl}/movie/now_playing?language=pt-BR&region=BR`, { headers });
   }
 
-  // Buscar filmes por nome (pesquisa)
-  searchMovie(query: string): Observable<any> {
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.token}`,
+  // Séries populares
+  getPopularSeries(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/tv/popular?language=pt-BR&region=BR`, {
+      headers: this.getHeaders(),
     });
+  }
 
-    return this.http.get(`${this.apiUrl}/search/movie?language=pt-BR&query=${query}`, { headers });
+  // Filmes populares
+  getPopularMovies(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/movie/popular?language=pt-BR&region=BR`, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  // Filmes em cartaz
+  getNowPlaying(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/movie/now_playing?language=pt-BR&region=BR`, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  // Buscar filmes
+  searchMovie(query: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/search/movie?language=pt-BR&query=${query}`, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  // Buscar séries
+  searchTVShow(query: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/search/tv?language=pt-BR&query=${query}`, {
+      headers: this.getHeaders(),
+    });
   }
 }

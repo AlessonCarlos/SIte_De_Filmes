@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Filmes em Cartaz</ion-title>
+    <ion-title>Filmes e Séries</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -14,27 +14,59 @@
     (keyup.enter)="searchMovies()">
   </ion-searchbar>
 
-  <!-- Botão de busca -->
-  <ion-button expand="full" (click)="searchMovies()">Buscar</ion-button>
+  <!-- Menu com botões -->
+  <ion-segment [(ngModel)]="categoriaSelecionada" (ionChange)="trocarCategoria()">
+    <ion-segment-button value="filmes">
+      Filmes
+    </ion-segment-button>
+    <ion-segment-button value="series">
+      Séries
+    </ion-segment-button>
+    <ion-segment-button value="cartaz">
+      Em Cartaz
+    </ion-segment-button>
 
-  <!-- Exibição dos filmes -->
-  <ion-grid>
+    <ion-segment-button value="Filtrar" routerLink="/generos">
+       Filtrar por gêneros
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- Botão de exemplo para *ngIf -->
+  <ion-button size="small" (click)="toggleMensagem()">
+    {{ mostrarMensagem ? 'GRUPO FORMADO POR: ' : 'Grupo' }}
+  </ion-button>
+
+  <!-- Texto exibido com *ngIf -->
+  <p *ngIf="mostrarMensagem" style="color: darkblue; font-size: 1.2rem; margin-top: 1rem;">
+      Alesson Carlos, Alvaro Henrique, Antonio Luan, Gabriel Alvaro, Marcos, João Victor, Beinjamin
+  </p>
+
+  <!-- Exibição dos filmes e séries -->
+  <ion-grid *ngIf="filmes.length > 0">
     <ion-row>
-      <!--Requisito NGFOR-->
-      <ion-col size="6" *ngFor="let filme of filmes">
-        <ion-card (click)="showDetails(filme)">
+      <ion-col size="12" size-md="6" size-lg="4" *ngFor="let filme of filmes">
+        <ion-card>
+          <!-- IMAGEM GRANDE -->
+          <img 
+            [src]="'https://image.tmdb.org/t/p/w500' + filme.poster_path" 
+            *ngIf="filme.poster_path"
+            style="width: 100%; height: auto; border-radius: 8px;" />
+
           <ion-card-header>
-            <ion-card-title>{{ filme.title }}</ion-card-title>
+            <ion-card-title>{{ filme.title || filme.name }}</ion-card-title>
+            <ion-card-subtitle>Nota: {{ filme.vote_average }}</ion-card-subtitle>
           </ion-card-header>
+
           <ion-card-content>
-            <ion-thumbnail slot="start">
-              <img [src]="'https://image.tmdb.org/t/p/w154' + filme.poster_path" />
-            </ion-thumbnail>
-            <p>{{ filme.release_date | date }}</p>
+            {{ filme.overview || 'Sem sinopse disponível.' }}
           </ion-card-content>
         </ion-card>
       </ion-col>
     </ion-row>
   </ion-grid>
-</ion-content>
 
+  <!-- Mensagem de erro caso não encontre filmes -->
+  <ion-item *ngIf="filmes.length === 0">
+    <ion-label>Nenhum filme ou série encontrado.</ion-label>
+  </ion-item>
+</ion-content>

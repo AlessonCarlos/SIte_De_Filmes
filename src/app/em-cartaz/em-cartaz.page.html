@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar>
+    <!-- Botão de voltar mais discreto -->
+    <ion-buttons slot="start">
+      <ion-button fill="clear" color="primary" routerLink="/home">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+        <ion-label>Voltar</ion-label>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Filmes em Cartaz</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Campo de busca -->
+  <ion-searchbar
+    [(ngModel)]="searchTerm"
+    (ionInput)="searchMovies()"
+    debounce="500"
+    placeholder="Buscar por filme..."
+    (keyup.enter)="searchMovies()">
+  </ion-searchbar>
+
+  <!-- Exibição dos filmes em cartaz -->
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" size-md="6" size-lg="4" *ngFor="let filme of filmes">
+        <ion-card (click)="showDetails(filme)">
+          <!-- Cartaz grande -->
+          <img 
+            [src]="'https://image.tmdb.org/t/p/w500' + filme.poster_path" 
+            *ngIf="filme.poster_path"
+            style="width: 100%; height: auto; border-radius: 8px;" />
+
+          <ion-card-header>
+            <ion-card-title>{{ filme.title }}</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <p>{{ filme.release_date | date }}</p>
+            <p>{{ filme.overview | slice:0:100 }}...</p> <!-- Exibe os primeiros 100 caracteres da sinopse -->
+
+            <!-- Mostrar mais da sinopse -->
+            <ion-button fill="clear" color="primary" (click)="toggleSinopse(filme)">
+              {{ filme.mostrarSinopse ? 'Ocultar sinopse' : 'Mostrar mais' }}
+            </ion-button>
+
+            <p *ngIf="filme.mostrarSinopse">{{ filme.overview }}</p> <!-- Exibe a sinopse completa se mostrarSinopse for true -->
+
+            <!-- Exibir informações extras (diretor, duração e nota) -->
+            <p><strong>Diretor:</strong> {{ filme.director || 'Não disponível' }}</p>
+            <p><strong>Duração:</strong> {{ filme.runtime || 'Não disponível' }} min</p>
+            <p><strong>Nota:</strong> {{ filme.vote_average || 'Não disponível' }} / 10</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

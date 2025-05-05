@@ -11,6 +11,25 @@ const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full'
   },
+  {
+    path: 'em-cartaz',
+    loadChildren: () => import('./em-cartaz/em-cartaz.module').then( m => m.EmCartazPageModule)
+  },
+  {
+    path: 'em-cartaz',
+    loadChildren: () => import('./em-cartaz/em-cartaz.page').then(m => m.EmCartazPage)
+  },
+  {
+    path: 'generos',
+    loadChildren: () => import('./generos/generos.module').then( m => m.GenerosPageModule)
+  },
+
+  {
+    path: 'generos',
+    loadChildren: () => import('./generos/generos.page').then(m => m.GenerosPage)
+  }
+  
+  
 ];
 
 @NgModule({

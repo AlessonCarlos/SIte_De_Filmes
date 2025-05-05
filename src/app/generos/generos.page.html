@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Filmes por Gênero</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Barra de botões para os gêneros -->
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button *ngFor="let genero of generos"
+                  (click)="filterFilmes(genero.id)"
+                  [ngStyle]="{ 'color': genero.name | generoFormatado }"
+                  appGeneroHover>
+        {{ genero.name | generoTraduzido }}
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <ion-grid *ngIf="filmes.length > 0">
+    <ion-row>
+      <ion-col size="12" size-md="6" size-lg="4" *ngFor="let filme of filmes">
+        <ion-card>
+          <img [src]="getImagemUrl(filme.poster_path)" *ngIf="filme.poster_path" />
+          <ion-card-header>
+            <ion-card-title>{{ filme.title }}</ion-card-title>
+            <ion-card-subtitle>Nota: {{ filme.vote_average }}</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            {{ filme.overview || 'Sem sinopse disponível.' }}
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-item *ngIf="filmes.length === 0">
+    <ion-label>Nenhum filme encontrado.</ion-label>
+  </ion-item>
+</ion-content>
