@@ -27,6 +27,12 @@ export class HomePage implements OnInit {
     this.mostrarMensagem = !this.mostrarMensagem;
   }
 
+  voltarInicio() {
+    this.searchTerm = '';
+    this.trocarCategoria();
+  }
+  
+
   trocarCategoria() {
     if (this.categoriaSelecionada === 'filmes') {
       this.getPopularMovies();

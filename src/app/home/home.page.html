@@ -5,14 +5,32 @@
 </ion-header>
 
 <ion-content>
-  <!-- Campo de busca -->
-  <ion-searchbar
-    [(ngModel)]="searchTerm"
-    (ionInput)="searchMovies()"
-    debounce="500"
-    placeholder="Buscar por filme..."
-    (keyup.enter)="searchMovies()">
-  </ion-searchbar>
+  <ion-row class="ion-align-items-center ion-no-padding">
+    <!-- Botão de busca -->
+    <ion-col size="auto" style="padding-right: 0;">
+      <ion-button size="small" (click)="searchMovies()">
+        BUSCAR
+      </ion-button>
+    </ion-col>
+  
+    <!-- Campo de busca -->
+    <ion-col style="padding-left: 0; padding-right: 0;">
+      <ion-searchbar
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="searchMovies()"
+        placeholder="Buscar por filme..."
+        style="--border-radius: 4px;">
+      </ion-searchbar>
+    </ion-col>
+  
+    <!-- Botão discreto para página inicial -->
+    <ion-col size="auto" style="padding-left: 0;">
+      <ion-button size="small" (click)="voltarInicio()">
+        Início
+      </ion-button>
+    </ion-col>
+  </ion-row>
+  
 
   <!-- Menu com botões -->
   <ion-segment [(ngModel)]="categoriaSelecionada" (ionChange)="trocarCategoria()">
