@@ -1,0 +1,95 @@
+<ion-header>
+  <ion-toolbar>
+
+    <ion-title><img fill="clear" color="primary" routerLink="/home" src="assets/imagem logo.png" alt="logo"
+        style="height: 40px; width: 200px; cursor: pointer;" /></ion-title>
+  </ion-toolbar>
+
+
+</ion-header>
+
+<ion-content>
+
+
+  <!-- Exibição dos filmes em cartaz -->
+  <ion-grid>
+    <ion-row>
+      <!--Esse *ngFor="let filme of filmes" está iterando sobre a lista de filmes e, para cada filme, ele:-->
+      <ion-col size="12" size-md="6" size-lg="2.4" *ngFor="let filme of filmes">
+        <ion-card
+          style="height: 600px; display: flex; flex-direction: column; overflow: hidden; background-color: rgb(48, 48, 48); color: white;"
+          (click)="showDetails(filme)">
+          <!-- Cartaz grande -->
+          <img [src]="'https://image.tmdb.org/t/p/w500' + filme.poster_path" *ngIf="filme.poster_path"
+            style="width: 100%; height: auto; border-radius: 8px;" />
+
+          <!--Todo esse card aqui esta trazendo os metodos get do em-cartaz.page.ts -->
+          <ion-card-header>
+            <!--filme.title tras o titulo do filme para o html-->
+            <ion-card-title>{{ filme.title }}</ion-card-title>
+            <ion-card-subtitle
+              style="color: white; background-color: black; padding: 5px 5px 5px 5px; border-radius:10px ; width: fit-content;">Nota:
+              {{ filme.vote_average.toFixed(1) }}</ion-card-subtitle>
+          </ion-card-header>
+
+          <ion-card-content style="flex: 1; overflow-y: auto; scrollbar-width: none;">
+            <!--filme.release puxa a data de lançamento para o html-->
+            <p>{{ filme.release_date | date }}</p>
+            <!--O overview só está mostrando a sinopse do filme-->
+            <p>{{ filme.overview | slice:0:100 }}...</p> <!-- Exibe os primeiros 100 caracteres da sinopse -->
+
+            <!-- Botão para alternar a exibição da sinopse do filme -->
+            <ion-button fill="clear" color="primary" (click)="toggleSinopse(filme)">
+              {{ filme.mostrarSinopse ? 'Ocultar sinopse' : 'Mostrar mais' }}
+            </ion-button>
+
+            <!-- Parágrafo que exibe a sinopse completa somente se a propriedade mostrarSinopse for true -->
+            <p *ngIf="filme.mostrarSinopse">
+              {{ filme.overview }}
+            </p>
+
+
+            <!-- Exibir informações extras (diretor, duração e nota) -->
+             <!--filme.director-->
+            <!-- Exibe o nome do diretor do filme. Se não estiver disponível, mostra "Não disponível" -->
+            <p><strong>Diretor:</strong> {{ filme.director || 'Não disponível' }}</p>
+            <!--filme.runtime-->
+            <!-- Exibe a duração do filme em minutos. Se não estiver disponível, mostra "Não disponível" -->
+            <p><strong>Duração:</strong> {{ filme.runtime || 'Não disponível' }} min</p>
+            <!--filme.vote_average -->
+            <!-- Exibe a nota média do filme (de 0 a 10). Se não estiver disponível, mostra "Não disponível" -->
+            <p><strong>Nota:</strong> {{ filme.vote_average || 'Não disponível' }} / 10</p>
+
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-footer class="custom-footer">
+    <div class="footer-content">
+      <div class="left-text">
+        <p>Todos os direitos <br> reservados ao grupo ©</p>
+      </div>
+      <div class="right-group">
+        <div (click)="toggleMensagem()" class="group-title"> {{ mostrarMensagem ? 'GRUPO FORMADO POR:' : 'Grupo' }}
+        </div>
+
+        <div *ngIf="mostrarMensagem" class="group-names">
+          <ul>
+            <li>Alesson Carlos</li>
+            <li>Gabriel Alvaro</li>
+            <li>Beinjamin</li>
+            <li>Marcos</li>
+          </ul>
+          <ul>
+            <li>Antonio Luan</li>
+            <li>Alvaro Miguel</li>
+            <li>João Victor</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </ion-footer>
+
+</ion-content>

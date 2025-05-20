@@ -1,0 +1,116 @@
+<ion-header>
+  <ion-toolbar>
+
+    <!-- clicar na logo do site para levar para página inicial -->
+    <ion-title>
+      <img src="assets/imagem logo.png" alt="logo" (click)="voltarInicio()"
+        style="height: 40px; width: 200px; cursor: pointer;" />
+    </ion-title>
+
+    <!-- Barra de pesquisa dentro do header -->
+    <ion-buttons slot="end">
+      <ion-searchbar [(ngModel)]="searchTerm" (keyup.enter)="searchMovies()" placeholder="Buscar por filme..."
+        style="--border-radius: 4px; width: 300px; text-align: left;">
+      </ion-searchbar>
+      <ion-button size="small" (click)="searchMovies()" style="margin-left: 8px;">
+        BUSCAR
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+
+  <!-- Menu com botões -->
+  <ion-segment [(ngModel)]="categoriaSelecionada" (ionChange)="trocarCategoria()">
+    <ion-segment-button value="filmes">
+      Filmes
+    </ion-segment-button>
+    <ion-segment-button value="series">
+      Séries
+    </ion-segment-button>
+    <ion-segment-button value="cartaz">
+      Em Cartaz
+    </ion-segment-button>
+    <!-- pagina generos configurada -->
+    <ion-segment-button value="Filtrar" routerLink="/generos">
+      Filtrar por gêneros
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- Botão para acessar a tela de Favoritos -->
+  <ion-button routerLink="/favoritos" expand="full" color="tertiary" style="margin: 16px;">
+    ⭐ Ver Meus Favoritos
+  </ion-button>
+
+
+  <!-- Exibição dos filmes e séries em 5 colunas -->
+  <!-- Ngif usado para carregar os filmes que estão na pagina -->
+  <ion-grid *ngIf="filmes.length > 0">
+    <ion-row>
+      <!-- NgFor:  -->
+      <!-- Aqui, cada item da lista filmes (preenchida pelo service) gera um card do componente personalizado app-filme-card.  -->
+      <ion-col size="12" size-md="6" size-lg="2.4" *ngFor="let filme of filmes">
+        <ion-card
+          style="height: 600px; display: flex; flex-direction: column; overflow: hidden; background-color: rgb(48, 48, 48); color: white;">
+          <!-- IMAGEM GRANDE com altura automática até o limite -->
+          <img [src]="'https://image.tmdb.org/t/p/w500' + filme.poster_path" *ngIf="filme.poster_path"
+            style="width: 100%; max-height: 100%; object-fit: cover; border-radius: 8px;" />
+
+          <ion-card-header>
+            <ion-icon name="star" (click)="addToFavorites(filme)"
+              [ngClass]="{'favorito-icon': true, 'favoritado': filme.favoritado}">
+            </ion-icon>
+
+            <!-- piper biultin uppercase, que deixa os titulos todos em caixa alta-->
+            <ion-card-title style="color: white;">{{ filme.title || filme.name | uppercase }}</ion-card-title>
+            <ion-card-subtitle
+              style="color: white; background-color: black; padding: 5px 5px 5px 5px; border-radius:10px ; width: fit-content;">Nota:
+              <!-- filme.vote_average: é uma propriedade do objeto filme que representa a nota média que o filme -->
+              {{ filme.vote_average.toFixed(1) }}</ion-card-subtitle>
+          </ion-card-header>
+
+          <ion-card-content style="flex: 1; overflow-y: auto; scrollbar-width: none;">
+            <!--O overview só está mostrando a sinopse do filme-->
+            {{ filme.overview || 'Sem sinopse disponível.' }}
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- Mensagem de erro caso não encontre filmes -->
+  <ion-item *ngIf="filmes.length === 0">
+    <ion-label>Nenhum filme ou série encontrado.</ion-label>
+  </ion-item>
+
+  <!--footer-->
+  <ion-footer class="custom-footer">
+    <div class="footer-content">
+      <div class="left-text">
+        <p>Todos os direitos <br> reservados ao grupo ©</p>
+      </div>
+      <div class="right-group">
+        <div (click)="toggleMensagem()" class="group-title"> {{ mostrarMensagem ? 'GRUPO FORMADO POR:' : 'Grupo' }}
+        </div>
+
+        <!--ngIf mostrando e ocultando nome dos integrantes do grupo-->
+        <div *ngIf="mostrarMensagem" class="group-names">
+          <ul>
+            <li>Alesson Carlos</li>
+            <li>Gabriel Alvaro</li>
+            <li>Beinjamin</li>
+            <li>Marcos</li>
+          </ul>
+          <ul>
+            <li>Antonio Luan</li>
+            <li>Alvaro Miguel</li>
+            <li>João Victor</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </ion-footer>
+
+</ion-content>

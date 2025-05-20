@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>
+      <a routerLink="/home" style="color: white; text-decoration: none;">Meus Favoritos</a>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let filme of favoritos">
+      <ion-label (click)="mostrarDetalhes(filme)" style="cursor: pointer; font-weight: bold;">
+        {{ filme.title || filme.name }}
+      </ion-label>
+
+      <ion-button color="danger" (click)="removerFavorito(filme)" slot="end" size="small">
+        Remover
+      </ion-button>
+    </ion-item>
+  </ion-list>
+
+  <div *ngIf="filmeDetalhes" class="detalhes-filme">
+    <h2>{{ filmeDetalhes.title || filmeDetalhes.name }}</h2>
+    <p>{{ filmeDetalhes.overview }}</p>
+    <img *ngIf="filmeDetalhes.poster_path"
+         [src]="'https://image.tmdb.org/t/p/w500' + filmeDetalhes.poster_path"
+         alt="Poster do filme"
+         class="poster-filme">
+    <ion-button (click)="fecharDetalhes()" color="medium" fill="outline">
+      Fechar detalhes
+    </ion-button>
+  </div>
+</ion-content>
+

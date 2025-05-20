@@ -1,0 +1,87 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+     <img fill="clear" color="primary" routerLink="/home" src="assets/imagem logo.png" alt="logo" style="height: 40px; width: 200px; cursor: pointer;" />
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  
+<ion-toolbar>
+  <ion-buttons slot="start" class="genero-buttons">
+    <div class="linha">
+      <!--Diretiva personalizada appGeneroHover-->
+      <ion-button style="border-radius: 10px;" *ngFor="let genero of generos.slice(0, 10)"
+                  (click)="filterFilmes(genero.id)"
+                  [ngStyle]="{ 'color': genero.name  }"
+                  appGeneroHover>
+                  <!--A pipe de tradução vem aqui-->
+        {{ genero.name | generoTraduzido }}
+      </ion-button>
+    </div>
+    <div class="linha">
+      <ion-button style="border-radius: 10px;" *ngFor="let genero of generos.slice(10, 19)"
+                  (click)="filterFilmes(genero.id)"
+                  [ngStyle]="{ 'color': genero.name  }"
+                  appGeneroHover>
+        {{ genero.name | generoTraduzido }}
+      </ion-button>
+    </div>
+  </ion-buttons>
+</ion-toolbar>
+<!--todo esse card ta trazendo os metodos get do genero.page.ts-->
+<!-- caso a api encontre os filmes o ngIF mostra todo esse grid-->
+  <ion-grid *ngIf="filmes.length > 0">
+    <ion-row>
+      <ion-col size="12" size-md="6" size-lg="2.4" *ngFor="let filme of filmes">
+        <ion-card style="height: 600px; display: flex; flex-direction: column; overflow: hidden; background-color: rgb(48, 48, 48); color: white;">
+          <img [src]="getImagemUrl(filme.poster_path)" *ngIf="filme.poster_path" />
+          <ion-card-header>
+            <!--filme.title tras o titulo do filme-->
+            <ion-card-title>{{ filme.title }}</ion-card-title>
+            <!--vote_average exibe a nota do filme-->
+            <ion-card-subtitle  style="color: white; background-color: black; padding: 5px 5px 5px 5px; border-radius:10px ; width: 
+            fit-content;">Nota: {{ filme.vote_average.toFixed(1) }}</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content style="flex: 1; overflow-y: auto; scrollbar-width: none;">
+            <!--O overview só está mostrando a sinopse do filme-->
+            {{ filme.overview || 'Sem sinopse disponível.' }}
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <!-- caso não encontre nenhum filme, o ngif exibe a mensagem-->
+  <ion-item *ngIf="filmes.length === 0">
+    <ion-label>Nenhum filme encontrado.</ion-label>
+  </ion-item>
+
+
+<ion-footer  class="custom-footer">
+  <div class="footer-content">
+    <div class="left-text">
+      <p>Todos os direitos <br> reservados ao grupo &copy; 2025</p>
+    </div>
+    <div class="right-group">
+      <div (click)="toggleMensagem()" class="group-title"> {{ mostrarMensagem ? 'GRUPO FORMADO POR:' : 'Grupo' }}</div>
+      <!-- NGif exibindo o nome dos integrantes do grupo-->
+      <div *ngIf="mostrarMensagem" class="group-names">
+        <ul>
+          <li>Alesson Carlos</li>
+          <li>Gabriel Alvaro</li>
+          <li>Beinjamin</li>
+          <li>Marcos</li>
+        </ul>
+        <ul>
+          <li>Antonio Luan</li>
+          <li>Alvaro Miguel</li>
+          <li>João Victor</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</ion-footer>    
+
+</ion-content>
+
