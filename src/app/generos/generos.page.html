@@ -11,7 +11,7 @@
 <ion-toolbar>
   <ion-buttons slot="start" class="genero-buttons">
     <div class="linha">
-      <!--Diretiva personalizada appGeneroHover-->
+      <!--Diretiva: personalizada appGeneroHover-->
       <ion-button style="border-radius: 10px;" *ngFor="let genero of generos.slice(0, 10)"
                   (click)="filterFilmes(genero.id)"
                   [ngStyle]="{ 'color': genero.name  }"
